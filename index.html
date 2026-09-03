@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Меню Гильдии Искателей</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+:root{
+  --parchment: #ecdfbe;
+  --parchment-dark: #d8c69a;
+  --parchment-shadow: #c7b283;
+  --ink: #2c1f14;
+  --ink-soft: #4a3826;
+  --leather: #3c2415;
+  --leather-mid: #5a3620;
+  --leather-deep: #1a1009;
+  --gold: #b8862f;
+  --gold-bright: #d9a84e;
+  --blood: #7a2b26;
+  --arcane: #2f5f66;
+  --arcane-bright: #4a8f97;
+}
+
+*{box-sizing:border-box;}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at top, #3a2a1a 0%, var(--leather-deep) 60%),
+    var(--leather-deep);
+  font-family:'EB Garamond', serif;
+  color:var(--ink);
+}
+
+.stage{
+  position:relative;
+  min-height:100vh;
+  padding:32px 16px 70px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* header */
+.top-row{
+  width:100%;
+  max-width:960px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px 18px;
+  margin-bottom:6px;
+}
+
+.title-group{
+  min-width:0;
+  flex:1 1 240px;
+}
+
+.hall-title{
+  font-family:'Cinzel Decorative', serif;
+  font-weight:700;
+  font-size:clamp(24px, 5vw, 44px);
+  color:var(--gold-bright);
+  text-shadow: 0 2px 0 #000, 0 0 24px rgba(184,134,47,0.35);
+  letter-spacing:1px;
+  margin:0;
+  line-height:1.15;
+}
+
+.hall-sub{
+  font-family:'EB Garamond', serif;
+  font-style:italic;
+  color:#c9b98f;
+  font-size:15px;
+  margin-top:6px;
+}
+
+/* toggle */
+.toggle{
+  position:relative;
+  display:flex;
+  background:var(--leather);
+  border:2px solid var(--gold);
+  border-radius:999px;
+  padding:4px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), 0 3px 8px rgba(0,0,0,0.5);
+  flex:0 0 auto;
+}
+
+.toggle button{
+  position:relative;
+  z-index:2;
+  border:none;
+  background:transparent;
+  font-family:'Cinzel', serif;
+  font-weight:600;
+  font-size:clamp(12px, 3.2vw, 14px);
+  letter-spacing:0.5px;
+  padding:9px clamp(12px, 3.6vw, 20px);
+  color:#c9b98f;
+  cursor:pointer;
+  transition:color 0.35s ease;
+  white-space:nowrap;
+}
+
+.toggle button.active{
+  color:#1a1009;
+}
+
+.toggle .thumb{
+  position:absolute;
+  top:4px;
+  bottom:4px;
+  left:4px;
+  width:calc(50% - 4px);
+  background:linear-gradient(180deg, var(--gold-bright), var(--gold));
+  border-radius:999px;
+  transition:transform 0.35s cubic-bezier(.65,.05,.36,1);
+  box-shadow:0 2px 6px rgba(0,0,0,0.5);
+}
+
+.toggle.drinks-active .thumb{
+  transform:translateX(100%);
+}
+
+/* book: leather cover wrapping two facing pages */
+.book{
+  width:100%;
+  max-width:980px;
+  margin-top:30px;
+  background:
+    linear-gradient(155deg, var(--leather-mid) 0%, var(--leather) 45%, #2a180d 100%);
+  border-radius:14px;
+  padding:18px;
+  position:relative;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.5),
+    0 30px 70px rgba(0,0,0,0.7),
+    inset 0 0 40px rgba(0,0,0,0.55);
+}
+
+/* stitched leather edge */
+.book::before{
+  content:"";
+  position:absolute;
+  inset:7px;
+  border:1.5px dashed rgba(216,183,111,0.35);
+  border-radius:9px;
+  pointer-events:none;
+}
+
+.book::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(255,255,255,0.06), transparent 35%),
+    radial-gradient(circle at 90% 92%, rgba(0,0,0,0.35), transparent 45%);
+  pointer-events:none;
+}
+
+.pages{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  background:var(--parchment);
+  border-radius:5px;
+  box-shadow:
+    inset 0 0 0 1px rgba(80,55,25,0.25),
+    0 8px 26px rgba(0,0,0,0.5);
+  overflow:hidden;
+}
+
+/* spine shadow down the middle */
+.pages::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:64px;
+  transform:translateX(-50%);
+  background:linear-gradient(90deg,
+    transparent 0%,
+    rgba(60,40,20,0.16) 38%,
+    rgba(30,18,8,0.32) 50%,
+    rgba(60,40,20,0.16) 62%,
+    transparent 100%);
+  pointer-events:none;
+  z-index:3;
+}
+
+.page{
+  position:relative;
+  padding:40px 34px 44px;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(120,80,30,0.10), transparent 32%),
+    radial-gradient(circle at 88% 90%, rgba(120,80,30,0.12), transparent 36%),
+    var(--parchment);
+}
+
+.page-left{
+  border-right:1px solid rgba(80,55,25,0.15);
+}
+
+/* worn page corner */
+.page::after{
+  content:"";
+  position:absolute;
+  width:46px;
+  height:46px;
+  bottom:0;
+  right:0;
+  background:linear-gradient(135deg, transparent 50%, rgba(120,90,50,0.16) 50%);
+  pointer-events:none;
+}
+
+.page-left::after{
+  right:auto;
+  left:0;
+  transform:scaleX(-1);
+}
+
+.section-block{
+  position:relative;
+}
+
+.section-heading{
+  font-family:'Cinzel', serif;
+  font-weight:700;
+  font-size:22px;
+  color:var(--ink);
+  margin:0 0 2px;
+  letter-spacing:0.5px;
+}
+
+.section-tag{
+  font-family:'EB Garamond', serif;
+  font-style:italic;
+  font-size:14px;
+  color:var(--ink-soft);
+  margin:0 0 18px;
+}
+
+.section-note{
+  font-family:'EB Garamond', serif;
+  font-size:14px;
+  color:var(--blood);
+  background:rgba(122,43,38,0.08);
+  border-left:3px solid var(--blood);
+  padding:10px 14px;
+  margin:0 0 20px;
+  line-height:1.5;
+}
+
+.divider{
+  display:none;
+}
+
+.item-list{
+  display:flex;
+  flex-direction:column;
+}
+
+.item-row{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  padding:11px 0;
+  border-bottom:1px solid rgba(44,31,20,0.14);
+}
+
+.item-row:last-child{
+  border-bottom:none;
+}
+
+.item-name{
+  font-family:'EB Garamond', serif;
+  font-size:17px;
+  font-weight:500;
+  color:var(--ink);
+  flex-shrink:0;
+}
+
+.item-leader{
+  flex:1;
+  border-bottom:1.5px dotted rgba(44,31,20,0.4);
+  transform:translateY(-5px);
+  min-width:14px;
+}
+
+.item-price{
+  font-family:'Cinzel', serif;
+  font-weight:600;
+  font-size:15px;
+  color:var(--blood);
+  flex-shrink:0;
+  white-space:nowrap;
+}
+
+.drinks-active .item-price{
+  color:var(--arcane);
+}
+
+/* panel switching */
+.panel{
+  display:none;
+}
+.panel.visible{
+  display:contents;
+}
+.panel.visible .page{
+  animation:reveal 0.4s ease;
+}
+
+@keyframes reveal{
+  from{opacity:0; transform:translateY(6px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+footer.note{
+  text-align:center;
+  color:#8a7657;
+  font-family:'EB Garamond', serif;
+  font-style:italic;
+  font-size:14px;
+  margin-top:26px;
+}
+
+@media (max-width:700px){
+  .toggle{align-self:flex-start;}
+  .book{padding:12px; border-radius:10px;}
+  .pages{grid-template-columns:1fr;}
+  .pages::before{display:none;}
+  .page{padding:30px 22px 34px;}
+  .page-left{border-right:none; border-bottom:1px solid rgba(80,55,25,0.18);}
+  .page-left::after{display:none;}
+  .item-name{font-size:16px;}
+  .item-price{font-size:14px;}
+}
+
+@media (max-width:380px){
+  .toggle button{padding:8px 11px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .toggle .thumb, .panel.visible{transition:none; animation:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="top-row">
+    <div class="title-group">
+      <h1 class="hall-title">Гильдия Искателей</h1>
+      <div class="hall-sub">меню трактира &amp; лавки алхимика</div>
+    </div>
+    <div class="toggle" id="toggle">
+      <div class="thumb"></div>
+      <button id="btn-food" class="active" onclick="setMode('food')">Еда</button>
+      <button id="btn-drinks" onclick="setMode('drinks')">Напитки</button>
+    </div>
+  </div>
+
+  <div class="book">
+    <div class="pages">
+
+      <div class="panel visible" id="panel-food">
+        <div class="page page-left">
+          <div class="section-block">
+            <h2 class="section-heading">Трапеза трактирщика</h2>
+            <p class="section-tag">сытное</p>
+            <div class="item-list">
+              <div class="item-row"><span class="item-name">Ребра Огра</span><span class="item-leader"></span><span class="item-price">6272 ₸</span></div>
+              <div class="item-row"><span class="item-name">Трофей Следопыта</span><span class="item-leader"></span><span class="item-price">8640 ₸</span></div>
+              <div class="item-row"><span class="item-name">Сковорода Кузнеца</span><span class="item-leader"></span><span class="item-price">3968 ₸</span></div>
+              <div class="item-row"><span class="item-name">Рагу «Старый замок»</span><span class="item-leader"></span><span class="item-price">3520 ₸</span></div>
+              <div class="item-row"><span class="item-name">Закуска Наемника</span><span class="item-leader"></span><span class="item-price">2432 ₸</span></div>
+              <div class="item-row"><span class="item-name">Сырные камни Мории</span><span class="item-leader"></span><span class="item-price">2880 ₸</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="page page-right">
+          <div class="section-block">
+            <h2 class="section-heading">Дары магического леса</h2>
+            <p class="section-tag">легкое</p>
+            <div class="item-list">
+              <div class="item-row"><span class="item-name">Салат Нимфы</span><span class="item-leader"></span><span class="item-price">3328 ₸</span></div>
+              <div class="item-row"><span class="item-name">Добыча Речного Короля</span><span class="item-leader"></span><span class="item-price">5440 ₸</span></div>
+              <div class="item-row"><span class="item-name">Гнездо Дриады</span><span class="item-leader"></span><span class="item-price">3136 ₸</span></div>
+              <div class="item-row"><span class="item-name">Лесной мох (десерт)</span><span class="item-leader"></span><span class="item-price">2688 ₸</span></div>
+              <div class="item-row"><span class="item-name">Рулеты Светлячков</span><span class="item-leader"></span><span class="item-price">2944 ₸</span></div>
+              <div class="item-row"><span class="item-name">Ягоды вечной осени</span><span class="item-leader"></span><span class="item-price">3520 ₸</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-drinks">
+        <div class="page page-left">
+          <div class="section-block">
+            <h2 class="section-heading">Кодекс гильдии</h2>
+            <p class="section-tag">хмельные эликсиры</p>
+            <p class="section-note">Указ магистра: не более 6 порций эля или 4 порций крепких эликсиров на одного героя. Дебоширы будут изгнаны стражей.</p>
+            <div class="item-list">
+              <div class="item-row"><span class="item-name">Щит Паладина</span><span class="item-leader"></span><span class="item-price">3330 ₸</span></div>
+              <div class="item-row"><span class="item-name">Жидкая Удача</span><span class="item-leader"></span><span class="item-price">2560 ₸</span></div>
+              <div class="item-row"><span class="item-name">Кровь Гиганта</span><span class="item-leader"></span><span class="item-price">3520 ₸</span></div>
+              <div class="item-row"><span class="item-name">Яд Виверны</span><span class="item-leader"></span><span class="item-price">2940 ₸</span></div>
+              <div class="item-row"><span class="item-name">Слезы Сирены</span><span class="item-leader"></span><span class="item-price">3840 ₸</span></div>
+              <div class="item-row"><span class="item-name">Пыль Некроманта</span><span class="item-leader"></span><span class="item-price">4160 ₸</span></div>
+              <div class="item-row"><span class="item-name">Шепот Банши</span><span class="item-leader"></span><span class="item-price">3710 ₸</span></div>
+              <div class="item-row"><span class="item-name">Молот Тора</span><span class="item-leader"></span><span class="item-price">4480 ₸</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="page page-right">
+          <div class="section-block">
+            <h2 class="section-heading">Лавка алхимика</h2>
+            <p class="section-tag">безалкогольное</p>
+            <div class="item-list">
+              <div class="item-row"><span class="item-name">Зелье Маны (синее)</span><span class="item-leader"></span><span class="item-price">2240 ₸</span></div>
+              <div class="item-row"><span class="item-name">Зелье Лечения (красное)</span><span class="item-leader"></span><span class="item-price">1920 ₸</span></div>
+              <div class="item-row"><span class="item-name">Роса Дриады</span><span class="item-leader"></span><span class="item-price">2050 ₸</span></div>
+              <div class="item-row"><span class="item-name">Дымный Энт</span><span class="item-leader"></span><span class="item-price">2430 ₸</span></div>
+              <div class="item-row"><span class="item-name">Молоко Единорога</span><span class="item-leader"></span><span class="item-price">2690 ₸</span></div>
+              <div class="item-row"><span class="item-name">Пепел Феникса</span><span class="item-leader"></span><span class="item-price">1790 ₸</span></div>
+              <div class="item-row"><span class="item-name">Глаз Циклопа</span><span class="item-leader"></span><span class="item-price">2560 ₸</span></div>
+              <div class="item-row"><span class="item-name">Сердце Голема</span><span class="item-leader"></span><span class="item-price">2240 ₸</span></div>
+              <div class="item-row"><span class="item-name">Дыхание Ифрита</span><span class="item-leader"></span><span class="item-price">2370 ₸</span></div>
+              <div class="item-row"><span class="item-name">Отвар Мудреца</span><span class="item-leader"></span><span class="item-price">1600 ₸</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="note">все цены указаны в тенге</footer>
+</div>
+
+<script>
+function setMode(mode){
+  const toggle = document.getElementById('toggle');
+  const btnFood = document.getElementById('btn-food');
+  const btnDrinks = document.getElementById('btn-drinks');
+  const panelFood = document.getElementById('panel-food');
+  const panelDrinks = document.getElementById('panel-drinks');
+
+  if(mode === 'food'){
+    toggle.classList.remove('drinks-active');
+    btnFood.classList.add('active');
+    btnDrinks.classList.remove('active');
+    panelDrinks.classList.remove('visible');
+    panelFood.classList.add('visible');
+  } else {
+    toggle.classList.add('drinks-active');
+    btnDrinks.classList.add('active');
+    btnFood.classList.remove('active');
+    panelFood.classList.remove('visible');
+    panelDrinks.classList.add('visible');
+  }
+}
+</script>
+
+</body>
+</html>
